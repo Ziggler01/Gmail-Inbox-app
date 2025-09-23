@@ -20,6 +20,7 @@ Data Processing
  Aggregating senders and message counts
  Generating “Top senders” list
 UI/UX Layer
+
  Frontend polling /jobs/scan → showed “Loading” → then results
  Displaying statistics (counts, charts/lists)
  Version Control & Collaboration
@@ -29,6 +30,8 @@ GitHub repo setup (git push, git pull --rebase)
 Handling 500 errors during callback
  Fixing FastAPI endpoint mapping (/jobs/scan)
  Logging for debugging token/code issues
+ ![CI](https://github.com/Ziggler01/Gmail-Inbox-app/actions/workflows/ci.yml/badge.svg)
+
 📂 Outputs from Phase 1
   OAuth flow working (user can sign in and grant access)
   Message scanning job (/jobs/scan) retrieving Gmail data
