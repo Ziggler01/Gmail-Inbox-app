@@ -4,9 +4,10 @@ from datetime import datetime
 from typing import Iterable # ← removed Optional
 
 
-from fastapi import FastAPI, Depends, HTTPException 
-from fastapi.responses import RedirectResponse
+m fastapi import FastAPI, Depends, HTTPException, Request
+from fastapi.responses import RedirectResponse, PlainTextResponse
 from pydantic_settings import BaseSettings
+
 
 from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, select, func
 from sqlalchemy.orm import declarative_base
