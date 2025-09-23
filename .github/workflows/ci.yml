@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-cov black ruff mypy
+      - name: Lint (ruff)
+        run: ruff check .
+      - name: Format (black)
+        run: black --check .
+      - name: Type check (mypy)
+        run: mypy app || true
+      - name: Run tests
+        run: pytest -q --cov=app --cov-report=term --cov-fail-under=70
