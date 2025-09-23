@@ -311,36 +311,23 @@ async def oauth_callback(
             return PlainTextResponse("Missing 'code' in callback.", status_code=400)
 
         scopes = [s.strip() for s in settings.GOOGLE_SCOPES.split(",") if s.strip()]
-        flow = _build_flow(scopes)
-        flow.redirect_uri = settings.GOOGLE_REDIRECT_URI
-
-        # Exchange code for tokens
+        flow = build_flow(scopes=scopes)  # or _build_flow if that's your helper
         flow.fetch_token(code=code)
         creds: Credentials = flow.credentials
 
-        token_json = creds.to_json()
-        row = (
-            await db.execute(
-                select(OAuthToken).where(OAuthToken.owner_email == settings.OWNER_EMAIL)
-            )
-        ).scalar_one_or_none()
-        if row:
-            row.token_json = token_json
-            row.updated_at = datetime.utcnow()
-        else:
-            db.add(OAuthToken(owner_email=settings.OWNER_EMAIL, token_json=token_json))
-        await db.commit()
-
-        return RedirectResponse("/docs")
+        # TODO: persist creds using `db`
+        return RedirectResponse(url="/connected")
 
     except Exception as e:
-        # Show the exact exception right in the browser (dev-only)
         import traceback
 
         traceback.print_exc()
         return PlainTextResponse(
-            f"OAuth callback exception: {repr(e)}", status_code=500
-        
-        @app.get("/health")
-        def health():
+            f"OAuth callback exception: {repr(e)}",
+            status_code=500,
+        )
+
+
+@app.get("/health")
+def health():
     return {"status": "ok"}
