@@ -1,9 +1,10 @@
 from __future__ import annotations
 import json
 from datetime import datetime
-from typing import Iterable, Optional
+from typing import Iterable # ← removed Optional
 
-from fastapi import FastAPI, Depends, HTTPException
+
+from fastapi import FastAPI, Depends, HTTPException 
 from fastapi.responses import RedirectResponse
 from pydantic_settings import BaseSettings
 
@@ -132,39 +133,8 @@ def parse_sender(from_header: str) -> str:
         email = f"{local}@{domain}"
     return email
 
-# ---------------------------
-# OAuth endpoints
-# ---------------------------
-@app.get("/oauth/google")
-async def oauth_google():
-    scopes = [s.strip() for s in settings.GOOGLE_SCOPES.split(",") if s.strip()]
-    flow = build_flow(scopes=scopes)
-    flow.redirect_uri = settings.GOOGLE_REDIRECT_URI
-    auth_url, _state = flow.authorization_url(
-        access_type="offline",
-        include_granted_scopes="true",
-        prompt="consent"
-    )
-    return RedirectResponse(auth_url)
 
-@app.get("/oauth/callback")
-async def oauth_callback(code: str, db: AsyncSession = Depends(get_session)):
-    scopes = [s.strip() for s in settings.GOOGLE_SCOPES.split(",") if s.strip()]
-    flow = build_flow(scopes=scopes)
-    flow.redirect_uri = settings.GOOGLE_REDIRECT_URI
-    flow.fetch_token(code=code)
-    creds: Credentials = flow.credentials
-    token_json = creds.to_json()
 
-    row = (await db.execute(select(OAuthToken).where(OAuthToken.owner_email == settings.OWNER_EMAIL))).scalar_one_or_none()
-    if row:
-        row.token_json = token_json
-        row.updated_at = datetime.utcnow()
-    else:
-        db.add(OAuthToken(owner_email=settings.OWNER_EMAIL, token_json=token_json))
-    await db.commit()
-    # send you back to docs for convenience
-    return RedirectResponse("/docs")
 
 # ---------------------------
 # Scanner (read-only, Part 1)
@@ -260,15 +230,7 @@ async def metrics(db: AsyncSession = Depends(get_session)):
         "messages": total_msgs,
         "top_unread_senders": [{"email": e, "unread": u or 0} for e, u in top]
     }
-from fastapi import Depends, HTTPException, Request
-from fastapi.responses import RedirectResponse, PlainTextResponse
-from google_auth_oauthlib.flow import Flow
-from google.oauth2.credentials import Credentials
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from datetime import datetime
-import json
-from .main import Settings, settings, get_session, OAuthToken
+
 
 def _build_flow(scopes):
     return Flow.from_client_config(
