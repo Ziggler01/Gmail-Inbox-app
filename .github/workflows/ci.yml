@@ -2,42 +2,33 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "main" ]
 
 jobs:
-  lint-test:
+  ci:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4   # MUST be first so files exist
-
-      - name: Debug: show files
-        run: |
-          pwd
-          ls -la
-          find . -maxdepth 2 -name "requirements*.txt" -o -name "pyproject.toml"
+      - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          # cache: 'pip'  # TEMP: disable until requirements file is confirmed
-          # cache-dependency-path: requirements.txt
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          if [ -f pyproject.toml ]; then pip install .; fi
+          pip install -r requirements.txt
           pip install pytest pytest-cov black ruff mypy
 
-      - name: Lint (ruff)
+      - name: Lint
         run: ruff check .
 
-      - name: Format (black)
+      - name: Format check
         run: black --check .
 
-      - name: Type check (mypy)
+      - name: Type check
         run: mypy app || true
 
       - name: Tests
-        run: pytest -q --cov=app --cov-report=term --cov-fail-under=70
+        run: pytest -q --cov=app --cov-fail-under=70
