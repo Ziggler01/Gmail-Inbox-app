@@ -30,7 +30,7 @@ jobs:
       - name: Type check
         run: mypy app || true
 
-        - name: Tests
+      - name: Tests
         env:
           PYTHONPATH: ${{ github.workspace }}
           OWNER_EMAIL: "test@example.com"
