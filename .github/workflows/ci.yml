@@ -31,5 +31,8 @@ jobs:
         run: mypy app || true
 
       - name: Tests
-        run: pytest -q --cov=app --cov-fail-under=1
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: pytest -q --cov=app --cov-report=term-missing --cov-fail-under=1
+
 
