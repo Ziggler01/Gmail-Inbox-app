@@ -30,9 +30,17 @@ jobs:
       - name: Type check
         run: mypy app || true
 
-      - name: Tests
+        - name: Tests
         env:
           PYTHONPATH: ${{ github.workspace }}
+          OWNER_EMAIL: "test@example.com"
+          GOOGLE_CLIENT_ID: "dummy-client-id"
+          GOOGLE_CLIENT_SECRET: "dummy-client-secret"
+          GOOGLE_REDIRECT_URI: "http://localhost/oauth/callback"
+          GOOGLE_SCOPES: "https://www.googleapis.com/auth/gmail.readonly"
+          # Optional, only if your code reads it:
+          DATABASE_URL: "sqlite+aiosqlite:///./test.db"
         run: pytest -q --cov=app --cov-report=term-missing --cov-fail-under=1
+      
 
 
