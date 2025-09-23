@@ -341,3 +341,6 @@ async def oauth_callback(
         return PlainTextResponse(
             f"OAuth callback exception: {repr(e)}", status_code=500
         )
+        @app.get("/health")
+        def health():
+    return {"status": "ok"}

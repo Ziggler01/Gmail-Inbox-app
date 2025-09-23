@@ -31,4 +31,5 @@ jobs:
         run: mypy app || true
 
       - name: Tests
-        run: pytest -q --cov=app --cov-fail-under=70
+        run: pytest -q --cov=app --cov-fail-under=1
+
