@@ -313,7 +313,7 @@ async def oauth_callback(
         scopes = [s.strip() for s in settings.GOOGLE_SCOPES.split(",") if s.strip()]
         flow = build_flow(scopes=scopes)  # or _build_flow if that's your helper
         flow.fetch_token(code=code)
-        creds: Credentials = flow.credentials
+        #  creds: Credentials = flow.credentials
 
         # TODO: persist creds using `db`
         return RedirectResponse(url="/connected")
