@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gmail-inbox-app"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 100
+src = ["app", "tests"]
+
+# Keep pytest config here (coverage gate currently 60%)
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --disable-warnings --cov=app --cov-report=term-missing --cov-fail-under=60"
+asyncio_default_fixture_loop_scope = "function"
